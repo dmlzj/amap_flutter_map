@@ -2,7 +2,12 @@ package com.amap.flutter.map.overlays.cluster;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -56,6 +61,7 @@ import io.flutter.plugin.common.MethodChannel;
 public class ClustersController
     extends AbstractOverlayController<ClusterController>
         implements AMap.OnCameraChangeListener,
+        ClusterRender,
         MyMethodCallHandler,
         AMap.OnMarkerClickListener {
     private AMap mAMap;
@@ -79,6 +85,8 @@ public class ClustersController
 
     private static final String CLASS_NAME = "ClustersController";
 
+    private Map<Integer, Drawable> mBackDrawAbles = new HashMap<Integer, Drawable>();
+
     /**
      * 构造函数
      *
@@ -87,6 +95,7 @@ public class ClustersController
      */
     public ClustersController(MethodChannel methodChannel, AMap amap, Context context) {
         super(methodChannel, amap);
+        mClusterRender = this;
         mContext = context;
         mClusters = new ArrayList<ClusterController>();
         mClusterItems = new ArrayList<ClusterOptionsSink>();
@@ -147,7 +156,7 @@ public class ClustersController
      * @param render
      */
     public void setClusterRenderer(ClusterRender render) {
-        mClusterRender = render;
+        mClusterRender = this;
     }
 
     public void onDestroy() {
@@ -474,6 +483,62 @@ public class ClustersController
     public int dp2px(Context context, float dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
+    }
+
+    @Override
+    public Drawable getDrawAble(int clusterNum) {
+        int radius = dp2px(mContext, 80);
+        if (clusterNum == 1) {
+            Drawable bitmapDrawable = mBackDrawAbles.get(1);
+            if (bitmapDrawable == null) {
+                bitmapDrawable =
+                        mContext.getResources().getDrawable(
+                                R.drawable.icon_openmap_mark);
+                mBackDrawAbles.put(1, bitmapDrawable);
+            }
+
+            return bitmapDrawable;
+        } else if (clusterNum < 5) {
+
+            Drawable bitmapDrawable = mBackDrawAbles.get(2);
+            if (bitmapDrawable == null) {
+                bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
+                        Color.argb(159, 210, 154, 6)));
+                mBackDrawAbles.put(2, bitmapDrawable);
+            }
+
+            return bitmapDrawable;
+        } else if (clusterNum < 10) {
+            Drawable bitmapDrawable = mBackDrawAbles.get(3);
+            if (bitmapDrawable == null) {
+                bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
+                        Color.argb(199, 217, 114, 0)));
+                mBackDrawAbles.put(3, bitmapDrawable);
+            }
+
+            return bitmapDrawable;
+        } else {
+            Drawable bitmapDrawable = mBackDrawAbles.get(4);
+            if (bitmapDrawable == null) {
+                bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
+                        Color.argb(235, 215, 66, 2)));
+                mBackDrawAbles.put(4, bitmapDrawable);
+            }
+
+            return bitmapDrawable;
+        }
+    }
+
+    private Bitmap drawCircle(int radius, int color) {
+
+        Bitmap bitmap = Bitmap.createBitmap(radius * 2, radius * 2,
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        RectF rectF = new RectF(0, 0, radius * 2, radius * 2);
+        paint.setColor(color);
+        canvas.drawArc(rectF, 0, 360, true, paint);
+        return bitmap;
     }
 
 
