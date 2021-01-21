@@ -150,6 +150,10 @@ class MethodChannelAMapFlutterMap implements AMapFlutterPlatform {
     return _events(mapId).whereType<MapPoiTouchEvent>();
   }
 
+  Stream<ClusterTapEvent> onClusterTap({@required int mapId}) {
+    return _events(mapId).whereType<ClusterTapEvent>();
+  }
+
   Stream<MarkerTapEvent> onMarkerTap({@required int mapId}) {
     return _events(mapId).whereType<MarkerTapEvent>();
   }
@@ -196,6 +200,10 @@ class MethodChannelAMapFlutterMap implements AMapFlutterPlatform {
       case 'map#onLongPress':
         _mapEventStreamController.add(MapLongPressEvent(
             mapId, LatLng.fromJson(call.arguments['latLng'])));
+        break;
+      case 'cluster#onTap':
+        _mapEventStreamController.add(ClusterTapEvent(mapId, 
+        call.arguments['items']));
         break;
 
       case 'marker#onTap':

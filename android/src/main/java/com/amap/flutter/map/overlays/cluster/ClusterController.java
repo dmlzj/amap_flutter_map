@@ -5,6 +5,7 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,8 +51,6 @@ public class ClusterController implements ClusterOptionsSink {
     List<ClusterOptionsSink> getClusterItems() {
         return mClusterItems;
     }
-
-
 
     @Override
     public void setPosition(LatLng position) {

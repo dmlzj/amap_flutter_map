@@ -25,7 +25,7 @@ public class ClusterOptionsBuilder implements ClusterOptionsSink {
 
     @Override
     public LatLng getPosition() {
-        return clusterOptions.location;
+        return clusterOptions.position;
     }
 
 }

@@ -76,6 +76,9 @@ class AMapWidget extends StatefulWidget {
   /// 相机视角移动结束的回调
   final ArgumentCallback<CameraPosition> onCameraMoveEnd;
 
+  /// cluster单击事件的回调
+  final ArgumentCallback<dynamic> onClusterTap;
+
   /// 地图单击事件的回调
   final ArgumentCallback<LatLng> onTap;
 
@@ -119,6 +122,7 @@ class AMapWidget extends StatefulWidget {
     this.onCameraMoveEnd,
     this.onLocationChanged,
     this.onTap,
+    this.onClusterTap,
     this.onLongPress,
     this.onPoiTouched,
     this.markers,

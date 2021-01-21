@@ -8,15 +8,15 @@ import com.amap.api.maps.model.LatLng;
  */
 
 public class ClusterOptions implements ClusterOptionsSink {
-    public LatLng location;
+    public LatLng position;
 
     public void setPosition(LatLng position) {
-        this.location = position;
+        this.position = position;
     }
 
     @Override
     public LatLng getPosition() {
-        return location;
+        return position;
     }
 
 }

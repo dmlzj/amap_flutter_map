@@ -15,6 +15,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.BitmapDescriptor;
@@ -33,10 +34,17 @@ import com.amap.flutter.map.utils.Const;
 import com.amap.flutter.map.utils.ConvertUtil;
 import com.amap.flutter.map.utils.LogUtil;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
+import io.flutter.plugin.common.JSONUtil;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
@@ -180,12 +188,27 @@ public class ClustersController
     //点击事件
     @Override
     public boolean onMarkerClick(Marker arg0) {
-        if (mClusterClickListener == null) {
-            return true;
-        }
+//        if (mClusterClickListener == null) {
+//            return true;
+//        }
         ClusterController cluster= (ClusterController) arg0.getObject();
         if(cluster!=null){
-            mClusterClickListener.onClick(arg0,cluster.getClusterItems());
+            final Map<String, Object> data = new HashMap<>(1);
+            List<ClusterOptionsSink> items = cluster.getClusterItems();
+//            JSONArray json = new JSONArray();
+//            for (ClusterOptionsSink item: items) {
+//                JSONObject jo = new JSONObject();
+//                try {
+//                    jo.put("position", ConvertUtil.latLngToList(item.getPosition()));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                json.put(jo);
+//
+//            }
+
+            data.put("items", JSON.toJSONString(items));
+            methodChannel.invokeMethod("cluster#onTap", data);
             return true;
         }
         return false;

@@ -62,6 +62,12 @@ class AMapController {
           ((MapLongPressEvent e) => _mapState.widget.onLongPress(e.value)));
     }
 
+    if (_mapState.widget.onClusterTap != null) {
+       _methodChannel
+        .onClusterTap(mapId: mapId)
+        .listen((ClusterTapEvent e) => _mapState.widget.onClusterTap(e.value));
+    }
+
     if (_mapState.widget.onPoiTouched != null) {
       _methodChannel.onPoiTouched(mapId: mapId).listen(
           ((MapPoiTouchEvent e) => _mapState.widget.onPoiTouched(e.value)));

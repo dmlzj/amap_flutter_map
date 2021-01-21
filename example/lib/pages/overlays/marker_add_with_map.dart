@@ -5,7 +5,7 @@
  * @Email: 284832506@qq.com
  * @Date: 2020-12-18 21:36:13
  * @LastEditors: dmlzj
- * @LastEditTime: 2021-01-21 13:33:53
+ * @LastEditTime: 2021-01-21 15:47:52
  * @如果有bug，那肯定不是我的锅，嘤嘤嘤
  */
 import 'dart:math';
@@ -49,6 +49,10 @@ class _BodyState extends State<_Body> {
       apiKey: ConstConfig.amapApiKeys,
       markers: Set<Marker>.of(_initMarkerMap.values),
       clusters: Set<Cluster>.of(_initClusterMap.values),
+      onClusterTap: (items) {
+        print('==================\n');
+        print(items);
+      },
     );
     return Container(
       child: amap,

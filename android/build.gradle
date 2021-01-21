@@ -34,5 +34,6 @@ android {
 
 dependencies {
     compileOnly 'com.amap.api:3dmap:7.6.0'
+    api 'com.alibaba:fastjson:1.1.72.android'
 }
 
