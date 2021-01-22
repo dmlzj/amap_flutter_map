@@ -5,7 +5,7 @@
  * @Email: 284832506@qq.com
  * @Date: 2020-12-18 21:36:13
  * @LastEditors: dmlzj
- * @LastEditTime: 2021-01-21 15:47:52
+ * @LastEditTime: 2021-01-22 09:58:48
  * @如果有bug，那肯定不是我的锅，嘤嘤嘤
  */
 import 'dart:math';
@@ -41,7 +41,10 @@ class _BodyState extends State<_Body> {
           mapCenter.longitude + cos(i * pi / 12.0) / 20.0);
       Marker marker = Marker(position: position);
       _initMarkerMap[marker.id] = marker;
-      Cluster cluster = Cluster(position: position);
+      Map data = {
+        "test": "test"
+      };
+      Cluster cluster = Cluster(position: position, data: data.toString());
       _initClusterMap[cluster.id] = cluster;
     }
 

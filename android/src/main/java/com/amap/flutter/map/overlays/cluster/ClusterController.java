@@ -18,6 +18,7 @@ public class ClusterController implements ClusterOptionsSink {
     private LatLng mLatLng;
     private List<ClusterOptionsSink> mClusterItems;
     private Marker mMarker;
+    private String data;
 
 
     ClusterController() {
@@ -61,5 +62,15 @@ public class ClusterController implements ClusterOptionsSink {
     @Override
     public LatLng getPosition() {
         return mLatLng;
+    }
+
+    @Override
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    @Override
+    public String getData() {
+        return this.data;
     }
 }

@@ -26,6 +26,11 @@ public class ClusterUtil {
             sink.setPosition(ConvertUtil.toLatLng(position));
         }
 
+        final String data1 = (String)data.get("data");
+        if (data1 != null) {
+            sink.setData(data1);
+        }
+
         final String clusterId = (String) data.get("id");
         if (clusterId == null) {
             throw new IllegalArgumentException("clusterId was null");

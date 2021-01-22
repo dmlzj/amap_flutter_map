@@ -197,24 +197,10 @@ public class ClustersController
     //点击事件
     @Override
     public boolean onMarkerClick(Marker arg0) {
-//        if (mClusterClickListener == null) {
-//            return true;
-//        }
         ClusterController cluster= (ClusterController) arg0.getObject();
         if(cluster!=null){
             final Map<String, Object> data = new HashMap<>(1);
             List<ClusterOptionsSink> items = cluster.getClusterItems();
-//            JSONArray json = new JSONArray();
-//            for (ClusterOptionsSink item: items) {
-//                JSONObject jo = new JSONObject();
-//                try {
-//                    jo.put("position", ConvertUtil.latLngToList(item.getPosition()));
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                json.put(jo);
-//
-//            }
 
             data.put("items", JSON.toJSONString(items));
             methodChannel.invokeMethod("cluster#onTap", data);
@@ -493,7 +479,7 @@ public class ClustersController
             if (bitmapDrawable == null) {
                 bitmapDrawable =
                         mContext.getResources().getDrawable(
-                                R.drawable.icon_openmap_mark);
+                                R.drawable.dp);
                 mBackDrawAbles.put(1, bitmapDrawable);
             }
 

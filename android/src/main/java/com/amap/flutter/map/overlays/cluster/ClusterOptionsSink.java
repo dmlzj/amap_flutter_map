@@ -11,4 +11,7 @@ public interface ClusterOptionsSink {
     void setPosition(LatLng position);
 
     LatLng getPosition();
+
+    void setData(String data);
+    String getData();
 }

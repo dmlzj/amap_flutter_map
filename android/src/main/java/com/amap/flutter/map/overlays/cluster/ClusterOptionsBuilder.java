@@ -28,4 +28,14 @@ public class ClusterOptionsBuilder implements ClusterOptionsSink {
         return clusterOptions.position;
     }
 
+    @Override
+    public void setData(String data) {
+        clusterOptions.setData(data);
+    }
+
+    @Override
+    public String getData() {
+        return clusterOptions.data;
+    }
+
 }
