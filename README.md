@@ -1,6 +1,6 @@
 # amap_flutter_map
 
-基于[高德开放平台地图SDK](https://lbs.amap.com/api/)的flutter插件
+基于[高德开放平台地图SDK](https://lbs.amap.com/api/)的flutter插件 QQ交流群：731946579
 
 ## Usage
 使用Flutter插件，请参考[在Flutter里使用Packages](https://flutter.cn/docs/development/packages-and-plugins/using-packages), 添加amap_flutter_map的引用
