@@ -18,6 +18,8 @@
 	<string>amap_flutter_map_example</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
