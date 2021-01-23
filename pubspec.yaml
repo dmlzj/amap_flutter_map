@@ -13,7 +13,7 @@ dependencies:
   flutter_plugin_android_lifecycle: ^1.0.0
   meta: ^1.0.5
   plugin_platform_interface: ^1.0.2
-  stream_transform: ^1.2.0
+  stream_transform: ^0.0.18
 
   amap_flutter_base: ^1.0.1
 
