@@ -59,11 +59,13 @@
         AMapPOI *amappoi = [AMapJsonUtils modelFromDict:dic modelClass:[AMapPOI class]];
         AMapGeoPoint * location = [[AMapGeoPoint alloc]init];
         NSArray * locArr =dic[@"position"];
-        location.latitude =  [locArr[0]floatValue];
-        location.longitude = [locArr[1]floatValue];
-        amappoi.location = location;
-        amappoi.address = dic[@"data"];//当成扩展字段 存数据了
-        [arr addObject:amappoi];
+        if (locArr.count>1) {
+            location.latitude =  [locArr[0]floatValue];
+            location.longitude = [locArr[1]floatValue];
+            amappoi.location = location;
+            amappoi.address = dic[@"data"];//当成扩展字段 存数据了
+            [arr addObject:amappoi];
+        }
     }
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         /* 建立四叉树. */
