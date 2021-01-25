@@ -26,7 +26,10 @@
 #import "AMapJsonUtils.h"
 #import "AMapConvertUtil.h"
 #import "FlutterMethodChannel+MethodCallDispatch.h"
-
+#import "AMapClusterController.h"
+#import "ClusterAnnotationView.h"
+#import "ClusterAnnotation.h"
+#import "AMapJsonUtils.h"
 @interface AMapViewController ()<MAMapViewDelegate>
 
 @property (nonatomic,strong) MAMapView *mapView;
@@ -37,12 +40,14 @@
 @property (nonatomic,strong) AMapMarkerController *markerController;
 @property (nonatomic,strong) AMapPolylineController *polylinesController;
 @property (nonatomic,strong) AMapPolygonController *polygonsController;
+@property (nonatomic,strong) AMapClusterController *clusterController;
 
 @property (nonatomic,copy) FlutterResult waitForMapCallBack;//waitForMap的回调，仅当地图没有加载完成时缓存使用
 @property (nonatomic,assign) BOOL mapInitCompleted;//地图初始化完成，首帧回调的标记
 
 @property (nonatomic,assign) MAMapRect initLimitMapRect;//初始化时，限制的地图范围；如果为{0,0,0,0},则没有限制
 
+@property (nonatomic,strong)NSArray * arr;
 @end
 
 
@@ -79,6 +84,7 @@
         
         self.mapInitCompleted = NO;
         _mapView = [[MAMapView alloc] initWithFrame:frame];
+        _mapView.frame = CGRectMake(0, 0, 414, 660);
         _mapView.delegate = self;
         _mapView.accessibilityElementsHidden = NO;
         [_mapView setCameraPosition:cameraPosition animated:NO duration:0];
@@ -98,9 +104,12 @@
         _polygonsController = [[AMapPolygonController alloc] init:_channel
                                                           mapView:_mapView
                                                         registrar:registrar];
+        _clusterController = [[AMapClusterController alloc] init:_channel
+                                                          mapView:_mapView
+                                                        registrar:registrar];
         id markersToAdd = args[@"markersToAdd"];
         if ([markersToAdd isKindOfClass:[NSArray class]]) {
-            [_markerController addMarkers:markersToAdd];
+           // [_markerController addMarkers:markersToAdd];
         }
         id polylinesToAdd = args[@"polylinesToAdd"];
         if ([polylinesToAdd isKindOfClass:[NSArray class]]) {
@@ -109,6 +118,11 @@
         id polygonsToAdd = args[@"polygonsToAdd"];
         if ([polygonsToAdd isKindOfClass:[NSArray class]]) {
             [_polygonsController addPolygons:polygonsToAdd];
+        }
+        id clustersToAdd = args[@"clustersToAdd"];
+        if ([clustersToAdd isKindOfClass:[NSArray class]]) {
+            _arr = clustersToAdd;
+        //[_polygonsController addPolygons:polygonsToAdd];
         }
         
         [self setMethodCallHandler];
@@ -164,7 +178,6 @@
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
-
 
 - (void)setMethodCallHandler {
     __weak __typeof__(self) weakSelf = self;
@@ -289,14 +302,38 @@
         self.waitForMapCallBack(nil);
         self.waitForMapCallBack = nil;
     }
+
 }
 
 //MARK: Annotation相关回调
 
 - (MAAnnotationView *)mapView:(MAMapView *)mapView viewForAnnotation:(id<MAAnnotation>)annotation {
+    if ([annotation isKindOfClass:[ClusterAnnotation class]])
+    {
+        /* dequeue重用annotationView. */
+        static NSString *const AnnotatioViewReuseID = @"AnnotatioViewReuseID";
+        
+        ClusterAnnotationView *annotationView = (ClusterAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:AnnotatioViewReuseID];
+        
+        if (!annotationView)
+        {
+            annotationView = [[ClusterAnnotationView alloc] initWithAnnotation:annotation
+                                                               reuseIdentifier:AnnotatioViewReuseID];
+        }
+        
+        /* 设置annotationView的属性. */
+        annotationView.annotation = annotation;
+        annotationView.count = [(ClusterAnnotation *)annotation count];
+        
+        /* 不弹出原生annotation */
+        annotationView.canShowCallout = NO;
+        
+        return annotationView;
+    }
     if ([annotation isKindOfClass:[MAPointAnnotation class]] == NO) {
         return nil;
     }
+    
     MAPointAnnotation *fAnno = annotation;
     if (fAnno.markerId == nil) {
         return nil;
@@ -350,11 +387,31 @@
  * @param view annotationView
  */
 - (void)mapView:(MAMapView *)mapView didAnnotationViewTapped:(MAAnnotationView *)view {
-    MAPointAnnotation *fAnno = view.annotation;
-    if (fAnno.markerId == nil) {
-        return;
+    if ([view isKindOfClass:[ClusterAnnotationView class]]) {
+        ClusterAnnotation *annotation = (ClusterAnnotation *)view.annotation;
+        NSMutableArray  * arr = [NSMutableArray arrayWithCapacity:0];
+        for (AMapPOI *poi in annotation.pois)
+        {
+            NSMutableDictionary * dic = [[NSMutableDictionary alloc]init];
+            [dic setObject:poi.address forKey:@"data"];
+            [dic setObject:@{@"latitude":@(poi.location.latitude),@"longitude":@(poi.location.longitude)} forKey:@"position"];
+            [arr addObject:dic];
+        }
+        
+        [self.channel invokeMethod:@"cluster#onTap" arguments:@{@"items" :[AMapJsonUtils toJSONData:arr]}];
+
+//        [self.channel addMethodName:@"cluster#onTap" withHandler:^(FlutterMethodCall * _Nonnull call, FlutterResult  _Nonnull result) {
+//            result(@"22222222");
+//        }];
+        
+    }else{
+        MAPointAnnotation *fAnno = view.annotation;
+        if (fAnno.markerId == nil) {
+            return;
+        }
+        [_markerController onMarkerTap:fAnno.markerId];
     }
-    [_markerController onMarkerTap:fAnno.markerId];
+  
 }
 
 /**
@@ -470,6 +527,8 @@
     if (dict) {
         [_channel invokeMethod:@"camera#onMoveEnd" arguments:@{@"position":dict}];
     }
+    [_clusterController addClusters:_arr];
+
 }
 
 @end

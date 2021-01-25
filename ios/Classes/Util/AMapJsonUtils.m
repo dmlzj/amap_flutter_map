@@ -272,4 +272,17 @@
     return location;
 }
 
++ (NSString *)toJSONData:(id)theData{
+    NSString * jsonString = @"";
+    if (theData != nil) {
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:theData
+                                                           options:NSJSONWritingPrettyPrinted
+                                                             error:nil];
+ 
+        if ([jsonData length] != 0){
+            jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        }
+    }
+    return jsonString;
+}
 @end

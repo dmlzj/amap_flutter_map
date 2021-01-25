@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
  @return 返回modelClass实例
  */
 + (id)modelFromDict:(NSDictionary*)dict modelClass:(Class)modelClass;
++ (NSString *)toJSONData:(id)theData;
 
 
 @end
