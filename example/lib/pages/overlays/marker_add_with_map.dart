@@ -35,15 +35,12 @@ class _BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
-    for(int i=0; i< 10; i++) {
-      LatLng position = LatLng(
-          mapCenter.latitude + sin(i * pi / 12.0) / 20.0,
+    for (int i = 0; i < 10; i++) {
+      LatLng position = LatLng(mapCenter.latitude + sin(i * pi / 12.0) / 20.0,
           mapCenter.longitude + cos(i * pi / 12.0) / 20.0);
       Marker marker = Marker(position: position);
       _initMarkerMap[marker.id] = marker;
-      Map data = {
-        "test": "test"
-      };
+      Map data = {"test": "test"};
       Cluster cluster = Cluster(position: position, data: data.toString());
       _initClusterMap[cluster.id] = cluster;
     }
@@ -61,5 +58,4 @@ class _BodyState extends State<_Body> {
       child: amap,
     );
   }
-
 }
