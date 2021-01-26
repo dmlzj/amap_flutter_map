@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.BitmapDescriptor;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
@@ -59,7 +60,7 @@ import io.flutter.plugin.common.MethodChannel;
  * 整体设计采用了两个线程,一个线程用于计算组织聚合数据,一个线程负责处理Marker相关操作
  */
 public class ClustersController
-    extends AbstractOverlayController<ClusterController>
+        extends AbstractOverlayController<ClusterController>
         implements AMap.OnCameraChangeListener,
         ClusterRender,
         MyMethodCallHandler,
@@ -201,9 +202,18 @@ public class ClustersController
         if(cluster!=null){
             final Map<String, Object> data = new HashMap<>(1);
             List<ClusterOptionsSink> items = cluster.getClusterItems();
-
-            data.put("items", JSON.toJSONString(items));
-            methodChannel.invokeMethod("cluster#onTap", data);
+            if (items.size() > 1) {
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (ClusterOptionsSink clusterItem : items) {
+                    builder.include(clusterItem.getPosition());
+                }
+                LatLngBounds latLngBounds = builder.build();
+                mAMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 0)
+                );
+            } else {
+                data.put("items", JSON.toJSONString(items.get(0)));
+                methodChannel.invokeMethod("cluster#onTap", data);
+            }
             return true;
         }
         return false;
