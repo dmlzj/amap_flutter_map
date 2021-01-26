@@ -109,7 +109,7 @@
                                                         registrar:registrar];
         id markersToAdd = args[@"markersToAdd"];
         if ([markersToAdd isKindOfClass:[NSArray class]]) {
-           // [_markerController addMarkers:markersToAdd];
+            [_markerController addMarkers:markersToAdd];
         }
         id polylinesToAdd = args[@"polylinesToAdd"];
         if ([polylinesToAdd isKindOfClass:[NSArray class]]) {
@@ -122,7 +122,6 @@
         id clustersToAdd = args[@"clustersToAdd"];
         if ([clustersToAdd isKindOfClass:[NSArray class]]) {
             _arr = clustersToAdd;
-        //[_polygonsController addPolygons:polygonsToAdd];
         }
         
         [self setMethodCallHandler];
@@ -527,7 +526,9 @@
     if (dict) {
         [_channel invokeMethod:@"camera#onMoveEnd" arguments:@{@"position":dict}];
     }
-    [_clusterController addClusters:_arr];
+    if(_arr.count!=0){
+        [_clusterController addClusters:_arr];
+    }
 
 }
 
