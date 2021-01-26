@@ -388,21 +388,13 @@
 - (void)mapView:(MAMapView *)mapView didAnnotationViewTapped:(MAAnnotationView *)view {
     if ([view isKindOfClass:[ClusterAnnotationView class]]) {
         ClusterAnnotation *annotation = (ClusterAnnotation *)view.annotation;
-        NSMutableArray  * arr = [NSMutableArray arrayWithCapacity:0];
-        for (AMapPOI *poi in annotation.pois)
-        {
+        if(annotation.pois.count==1){
+            AMapPOI *poi = annotation.pois[0];
             NSMutableDictionary * dic = [[NSMutableDictionary alloc]init];
             [dic setObject:poi.address forKey:@"data"];
             [dic setObject:@{@"latitude":@(poi.location.latitude),@"longitude":@(poi.location.longitude)} forKey:@"position"];
-            [arr addObject:dic];
+            [self.channel invokeMethod:@"cluster#onTap" arguments:@{@"items" :[AMapJsonUtils toJSONData:dic]}];
         }
-        
-        [self.channel invokeMethod:@"cluster#onTap" arguments:@{@"items" :[AMapJsonUtils toJSONData:arr]}];
-
-//        [self.channel addMethodName:@"cluster#onTap" withHandler:^(FlutterMethodCall * _Nonnull call, FlutterResult  _Nonnull result) {
-//            result(@"22222222");
-//        }];
-        
     }else{
         MAPointAnnotation *fAnno = view.annotation;
         if (fAnno.markerId == nil) {
