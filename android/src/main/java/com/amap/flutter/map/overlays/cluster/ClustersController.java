@@ -74,7 +74,7 @@ public class ClustersController
     private ClusterRender mClusterRender;
     private List<Marker> mAddMarkers = new ArrayList<Marker>();
     private double mClusterDistance;
-    private LruCache<Integer, BitmapDescriptor> mLruCache;
+    private LruCache<String, BitmapDescriptor> mLruCache;
     private HandlerThread mMarkerHandlerThread = new HandlerThread("addMarker");
     private HandlerThread mSignClusterThread = new HandlerThread("calculateCluster");
     private Handler mMarkerhandler;
@@ -86,7 +86,7 @@ public class ClustersController
 
     private static final String CLASS_NAME = "ClustersController";
 
-    private Map<Integer, Drawable> mBackDrawAbles = new HashMap<Integer, Drawable>();
+    private Map<String, Drawable> mBackDrawAbles = new HashMap<String, Drawable>();
 
     /**
      * 构造函数
@@ -101,7 +101,7 @@ public class ClustersController
         mClusters = new ArrayList<ClusterController>();
         mClusterItems = new ArrayList<ClusterOptionsSink>();
         //默认最多会缓存80张图片作为聚合显示元素图片,根据自己显示需求和app使用内存情况,可以修改数量
-        mLruCache = new LruCache<Integer, BitmapDescriptor>(80) {
+        mLruCache = new LruCache<String, BitmapDescriptor>(80) {
             protected void entryRemoved(boolean evicted, Integer key, BitmapDescriptor oldValue, BitmapDescriptor newValue) {
                 reycleBitmap(oldValue.getBitmap());
             }
@@ -268,7 +268,7 @@ public class ClustersController
     private int getWarningNum(ClusterController cluster) {
         int num = 0;
         List<ClusterOptionsSink> items = cluster.getClusterItems();
-        for(ClusterOptionsSink s :items) {
+        for (ClusterOptionsSink s : items) {
             String data = s.getData();
             JSONObject json = JSON.parseObject(data);
             if (json.containsKey("warning_num")) {
@@ -386,26 +386,26 @@ public class ClustersController
      * 获取每个聚合点的绘制样式
      */
     private BitmapDescriptor getBitmapDes(int num, int warning_num) {
-//        BitmapDescriptor bitmapDescriptor = mLruCache.get(num);
-        BitmapDescriptor bitmapDescriptor;
-//        if (bitmapDescriptor == null) {
-        TextView textView = new TextView(mContext);
-        if (num > 1) {
-            String tile = String.valueOf(num);
-            textView.setText(tile);
-        }
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextColor(Color.BLACK);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-        if (mClusterRender != null && mClusterRender.getDrawAble(num, warning_num) != null) {
-            textView.setBackground(mClusterRender.getDrawAble(num, warning_num));
-        } else {
-            textView.setBackgroundResource(R.drawable.defaultcluster);
-        }
-        bitmapDescriptor = BitmapDescriptorFactory.fromView(textView);
-//            mLruCache.put(num, bitmapDescriptor);
+        String key = "cluster" + num + "warning_num" + warning_num;
+        BitmapDescriptor bitmapDescriptor = mLruCache.get(key);
+        if (bitmapDescriptor == null) {
+            TextView textView = new TextView(mContext);
+            if (num > 1) {
+                String tile = String.valueOf(num);
+                textView.setText(tile);
+            }
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextColor(Color.BLACK);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+            if (mClusterRender != null && mClusterRender.getDrawAble(num, warning_num) != null) {
+                textView.setBackground(mClusterRender.getDrawAble(num, warning_num));
+            } else {
+                textView.setBackgroundResource(R.drawable.defaultcluster);
+            }
+            bitmapDescriptor = BitmapDescriptorFactory.fromView(textView);
+            mLruCache.put(key, bitmapDescriptor);
 
-//        }
+        }
         return bitmapDescriptor;
     }
 
@@ -506,45 +506,35 @@ public class ClustersController
     public Drawable getDrawAble(int clusterNum, int warning_num) {
         int radius = dp2px(mContext, 80);
         int _color;
-        if (warning_num > 0) {
-            _color = Color.parseColor("#b3ff0000");
-        } else {
-            _color = Color.parseColor("#b300ff00");
-        }
-        if (clusterNum == 1) {
+        String key = "cluster" + clusterNum + "-warnint_num" + warning_num;
+        Drawable bitmapDrawable = mBackDrawAbles.get(key);
+        if (bitmapDrawable == null) {
             if (warning_num > 0) {
-                Drawable bitmapDrawable =
-                        mContext.getResources().getDrawable(
-                                R.drawable.dp_error);
-                return bitmapDrawable;
+                _color = Color.parseColor("#b3ff0000");
+            } else {
+                _color = Color.parseColor("#b300ff00");
+            }
+            if (clusterNum == 1) {
+                if (warning_num > 0) {
+                    bitmapDrawable = mContext.getResources().getDrawable(
+                            R.drawable.dp_error);
+
+                } else {
+                    bitmapDrawable =
+                            mContext.getResources().getDrawable(
+                                    R.drawable.dp);
+                }
 
             } else {
-                Drawable bitmapDrawable =
-                        mContext.getResources().getDrawable(
-                                R.drawable.dp);
-                return bitmapDrawable;
+
+                bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
+                        _color));
             }
-
-        } else if (clusterNum < 5) {
-
-            Drawable bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
-                    _color));
-
-            return bitmapDrawable;
-        } else if (clusterNum < 10) {
-
-
-            Drawable bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
-                    _color));
-
-            return bitmapDrawable;
-        } else {
-
-            Drawable bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
-                    _color));
-
+            mBackDrawAbles.put(key, bitmapDrawable);
             return bitmapDrawable;
         }
+        return bitmapDrawable;
+
     }
 
     private Bitmap drawCircle(int radius, int color) {
