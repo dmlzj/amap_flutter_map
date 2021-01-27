@@ -21,6 +21,7 @@ import android.view.Gravity;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
@@ -42,7 +43,6 @@ import com.amap.flutter.map.utils.LogUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -198,8 +198,8 @@ public class ClustersController
     //点击事件
     @Override
     public boolean onMarkerClick(Marker arg0) {
-        ClusterController cluster= (ClusterController) arg0.getObject();
-        if(cluster!=null){
+        ClusterController cluster = (ClusterController) arg0.getObject();
+        if (cluster != null) {
             final Map<String, Object> data = new HashMap<>(1);
             List<ClusterOptionsSink> items = cluster.getClusterItems();
             if (items.size() > 1) {
@@ -227,8 +227,8 @@ public class ClustersController
 
         ArrayList<Marker> removeMarkers = new ArrayList<>();
         removeMarkers.addAll(mAddMarkers);
-        AlphaAnimation alphaAnimation=new AlphaAnimation(1, 0);
-        MyAnimationListener myAnimationListener=new MyAnimationListener(removeMarkers);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
+        MyAnimationListener myAnimationListener = new MyAnimationListener(removeMarkers);
         for (Marker marker : removeMarkers) {
             marker.setAnimation(alphaAnimation);
             marker.setAnimationListener(myAnimationListener);
@@ -240,7 +240,8 @@ public class ClustersController
         }
     }
 
-    private AlphaAnimation mADDAnimation=new AlphaAnimation(0, 1);
+    private AlphaAnimation mADDAnimation = new AlphaAnimation(0, 1);
+
     /**
      * 将单个聚合元素添加至地图显示
      *
@@ -249,9 +250,12 @@ public class ClustersController
     private void addSingleClusterToMap(ClusterController cluster) {
         LatLng latlng = cluster.getCenterLatLng();
         MarkerOptions markerOptions = new MarkerOptions();
+        int num = getWarningNum(cluster);
+
         markerOptions.anchor(0.5f, 0.5f)
-                .icon(getBitmapDes(cluster.getClusterCount())).position(latlng);
+                .icon(getBitmapDes(cluster.getClusterCount(), num)).position(latlng);
         Marker marker = mAMap.addMarker(markerOptions);
+
         marker.setAnimation(mADDAnimation);
         marker.setObject(cluster);
 
@@ -261,6 +265,18 @@ public class ClustersController
 
     }
 
+    private int getWarningNum(ClusterController cluster) {
+        int num = 0;
+        List<ClusterOptionsSink> items = cluster.getClusterItems();
+        for(ClusterOptionsSink s :items) {
+            String data = s.getData();
+            JSONObject json = JSON.parseObject(data);
+            if (json.containsKey("warning_num")) {
+                num += json.getIntValue("warning_num");
+            }
+        }
+        return num;
+    }
 
 
     private void calculateClusters() {
@@ -272,13 +288,15 @@ public class ClustersController
                 return;
             }
             LatLng latlng = clusterItem.getPosition();
+            String data = clusterItem.getData();
             if (visibleBounds.contains(latlng)) {
-                ClusterController cluster = getCluster(latlng,mClusters);
+                ClusterController cluster = getCluster(latlng, mClusters);
                 if (cluster != null) {
                     cluster.addClusterItem(clusterItem);
                 } else {
                     cluster = new ClusterController();
                     cluster.setPosition(latlng);
+                    cluster.setData(data);
                     mClusters.add(cluster);
                     cluster.addClusterItem(clusterItem);
                 }
@@ -315,10 +333,11 @@ public class ClustersController
     private void calculateSingleCluster(ClusterOptionsSink clusterItem) {
         LatLngBounds visibleBounds = mAMap.getProjection().getVisibleRegion().latLngBounds;
         LatLng latlng = clusterItem.getPosition();
+        String data = clusterItem.getData();
         if (!visibleBounds.contains(latlng)) {
             return;
         }
-        ClusterController cluster = getCluster(latlng,mClusters);
+        ClusterController cluster = getCluster(latlng, mClusters);
         if (cluster != null) {
             cluster.addClusterItem(clusterItem);
             Message message = Message.obtain();
@@ -333,6 +352,7 @@ public class ClustersController
 
             cluster = new ClusterController();
             cluster.setPosition(latlng);
+            cluster.setData(data);
             mClusters.add(cluster);
             cluster.addClusterItem(clusterItem);
             Message message = Message.obtain();
@@ -349,7 +369,7 @@ public class ClustersController
      * @param latLng
      * @return
      */
-    private ClusterController getCluster(LatLng latLng, List<ClusterController>clusters) {
+    private ClusterController getCluster(LatLng latLng, List<ClusterController> clusters) {
         for (ClusterController cluster : clusters) {
             LatLng clusterCenterPoint = cluster.getCenterLatLng();
             double distance = AMapUtils.calculateLineDistance(latLng, clusterCenterPoint);
@@ -365,26 +385,27 @@ public class ClustersController
     /**
      * 获取每个聚合点的绘制样式
      */
-    private BitmapDescriptor getBitmapDes(int num) {
-        BitmapDescriptor bitmapDescriptor = mLruCache.get(num);
-        if (bitmapDescriptor == null) {
-            TextView textView = new TextView(mContext);
-            if (num > 1) {
-                String tile = String.valueOf(num);
-                textView.setText(tile);
-            }
-            textView.setGravity(Gravity.CENTER);
-            textView.setTextColor(Color.BLACK);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-            if (mClusterRender != null && mClusterRender.getDrawAble(num) != null) {
-                textView.setBackground(mClusterRender.getDrawAble(num));
-            } else {
-                textView.setBackgroundResource(R.drawable.defaultcluster);
-            }
-            bitmapDescriptor = BitmapDescriptorFactory.fromView(textView);
-            mLruCache.put(num, bitmapDescriptor);
-
+    private BitmapDescriptor getBitmapDes(int num, int warning_num) {
+//        BitmapDescriptor bitmapDescriptor = mLruCache.get(num);
+        BitmapDescriptor bitmapDescriptor;
+//        if (bitmapDescriptor == null) {
+        TextView textView = new TextView(mContext);
+        if (num > 1) {
+            String tile = String.valueOf(num);
+            textView.setText(tile);
         }
+        textView.setGravity(Gravity.CENTER);
+        textView.setTextColor(Color.BLACK);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+        if (mClusterRender != null && mClusterRender.getDrawAble(num, warning_num) != null) {
+            textView.setBackground(mClusterRender.getDrawAble(num, warning_num));
+        } else {
+            textView.setBackgroundResource(R.drawable.defaultcluster);
+        }
+        bitmapDescriptor = BitmapDescriptorFactory.fromView(textView);
+//            mLruCache.put(num, bitmapDescriptor);
+
+//        }
         return bitmapDescriptor;
     }
 
@@ -394,7 +415,8 @@ public class ClustersController
     private void updateCluster(ClusterController cluster) {
 
         Marker marker = cluster.getMarker();
-        marker.setIcon(getBitmapDes(cluster.getClusterCount()));
+        int num = getWarningNum(cluster);
+        marker.setIcon(getBitmapDes(cluster.getClusterCount(), num));
 
 
     }
@@ -472,7 +494,6 @@ public class ClustersController
 //    }
 
 
-
     /**
      * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
      */
@@ -482,44 +503,45 @@ public class ClustersController
     }
 
     @Override
-    public Drawable getDrawAble(int clusterNum) {
+    public Drawable getDrawAble(int clusterNum, int warning_num) {
         int radius = dp2px(mContext, 80);
+        int _color;
+        if (warning_num > 0) {
+            _color = Color.parseColor("#b3ff0000");
+        } else {
+            _color = Color.parseColor("#b300ff00");
+        }
         if (clusterNum == 1) {
-            Drawable bitmapDrawable = mBackDrawAbles.get(1);
-            if (bitmapDrawable == null) {
-                bitmapDrawable =
+            if (warning_num > 0) {
+                Drawable bitmapDrawable =
+                        mContext.getResources().getDrawable(
+                                R.drawable.dp_error);
+                return bitmapDrawable;
+
+            } else {
+                Drawable bitmapDrawable =
                         mContext.getResources().getDrawable(
                                 R.drawable.dp);
-                mBackDrawAbles.put(1, bitmapDrawable);
+                return bitmapDrawable;
             }
 
-            return bitmapDrawable;
         } else if (clusterNum < 5) {
 
-            Drawable bitmapDrawable = mBackDrawAbles.get(2);
-            if (bitmapDrawable == null) {
-                bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
-                        Color.argb(159, 210, 154, 6)));
-                mBackDrawAbles.put(2, bitmapDrawable);
-            }
+            Drawable bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
+                    _color));
 
             return bitmapDrawable;
         } else if (clusterNum < 10) {
-            Drawable bitmapDrawable = mBackDrawAbles.get(3);
-            if (bitmapDrawable == null) {
-                bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
-                        Color.argb(199, 217, 114, 0)));
-                mBackDrawAbles.put(3, bitmapDrawable);
-            }
+
+
+            Drawable bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
+                    _color));
 
             return bitmapDrawable;
         } else {
-            Drawable bitmapDrawable = mBackDrawAbles.get(4);
-            if (bitmapDrawable == null) {
-                bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
-                        Color.argb(235, 215, 66, 2)));
-                mBackDrawAbles.put(4, bitmapDrawable);
-            }
+
+            Drawable bitmapDrawable = new BitmapDrawable(null, drawCircle(radius,
+                    _color));
 
             return bitmapDrawable;
         }
@@ -544,7 +566,7 @@ public class ClustersController
      * marker渐变动画，动画结束后将Marker删除
      */
     class MyAnimationListener implements Animation.AnimationListener {
-        private  List<Marker> mRemoveMarkers ;
+        private List<Marker> mRemoveMarkers;
 
         MyAnimationListener(List<Marker> removeMarkers) {
             mRemoveMarkers = removeMarkers;
@@ -557,7 +579,7 @@ public class ClustersController
 
         @Override
         public void onAnimationEnd() {
-            for(Marker marker:mRemoveMarkers){
+            for (Marker marker : mRemoveMarkers) {
                 marker.remove();
             }
             mRemoveMarkers.clear();
@@ -617,7 +639,7 @@ public class ClustersController
                 case CALCULATE_SINGLE_CLUSTER:
                     ClusterOptionsSink item = (ClusterOptionsSink) message.obj;
                     mClusterItems.add(item);
-                    Log.i("yiyi.qi","calculate single cluster");
+                    Log.i("yiyi.qi", "calculate single cluster");
                     calculateSingleCluster(item);
                     break;
             }
