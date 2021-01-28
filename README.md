@@ -3,7 +3,13 @@
 基于[高德开放平台地图SDK](https://lbs.amap.com/api/)的flutter插件 QQ交流群：731946579
 
 ## Usage
-使用Flutter插件，请参考[在Flutter里使用Packages](https://flutter.cn/docs/development/packages-and-plugins/using-packages), 添加amap_flutter_map的引用
+* 使用Flutter插件，请参考[在Flutter里使用Packages](https://flutter.cn/docs/development/packages-and-plugins/using-packages), 添加amap_flutter_map的引用
+* 本插件在官方插件基础之上做了修改，若是不想使用不要用本仓库地址做为插件的地址
+
+## 基于官方插件修改内容
+- 修改插件flutter要求版本： 1.20.0 到 1.17.2
+- 修改stream_transform插件版本：1.2.0 到0.0.18
+- 添加点聚合功能，实现点聚合
 
 ## 准备工作
 * 登录[高德开放平台官网](https://lbs.amap.com/)申请ApiKey。Android平台申请配置key请参考[Android获取key](https://lbs.amap.com/api/poi-sdk-android/develop/create-project/get-key/?sug_index=2), iOS平台申请配置请参考[iOS获取key](https://lbs.amap.com/api/poi-sdk-ios/develop/create-project/get-key/?sug_index=1)。
