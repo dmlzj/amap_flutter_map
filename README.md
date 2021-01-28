@@ -9,7 +9,7 @@
 * 登录[高德开放平台官网](https://lbs.amap.com/)申请ApiKey。Android平台申请配置key请参考[Android获取key](https://lbs.amap.com/api/poi-sdk-android/develop/create-project/get-key/?sug_index=2), iOS平台申请配置请参考[iOS获取key](https://lbs.amap.com/api/poi-sdk-ios/develop/create-project/get-key/?sug_index=1)。
 * 引入高得地图SDK，Android平台请参考[Android Sudio配置工程](https://lbs.amap.com/api/android-sdk/guide/create-project/android-studio-create-project), iOS平台请参考[ios安装地图SDK](https://lbs.amap.com/api/ios-sdk/guide/create-project/cocoapods)
 
-## 使用示例
+## 基本使用示例
 ``` Dart
 import 'package:amap_flutter_map_example/base_page.dart';
 import 'package:flutter/material.dart';
@@ -96,6 +96,55 @@ class _ShowMapPageState extends State<_ShowMapPageBody> {
   }
 }
 
+```
+
+## 点聚合使用示例：参考demo中的marker_add_with_map.dart文件即可
+* 效果图如下：
+![image](https://github.com/dmlzj/amap_flutter_map/blob/master/test/Screenshot.jpg)
+```Dart
+class MarkerAddWithMapPage extends BasePage {
+  MarkerAddWithMapPage(String title, String subTitle) : super(title, subTitle);
+
+  @override
+  Widget build(BuildContext context) => _Body();
+}
+
+class _Body extends StatefulWidget {
+  @override
+  _BodyState createState() => _BodyState();
+}
+
+class _BodyState extends State<_Body> {
+  static final LatLng mapCenter = const LatLng(39.909187, 116.397451);
+  final Map<String, Marker> _initMarkerMap = <String, Marker>{};
+  final Map<String, Cluster> _initClusterMap = <String, Cluster>{};
+
+  @override
+  Widget build(BuildContext context) {
+    for (int i = 0; i < 10; i++) {
+      LatLng position = LatLng(mapCenter.latitude + sin(i * pi / 12.0) / 20.0,
+          mapCenter.longitude + cos(i * pi / 12.0) / 20.0);
+      Marker marker = Marker(position: position);
+      _initMarkerMap[marker.id] = marker;
+      Map data = {"test": "test"};
+      Cluster cluster = Cluster(position: position, data: jsonEncode(data));
+      _initClusterMap[cluster.id] = cluster;
+    }
+
+    final AMapWidget amap = AMapWidget(
+      apiKey: ConstConfig.amapApiKeys,
+      markers: Set<Marker>.of(_initMarkerMap.values),
+      clusters: Set<Cluster>.of(_initClusterMap.values),
+      onClusterTap: (items) {
+        print('==================\n');
+        print(items);
+      },
+    );
+    return Container(
+      child: amap,
+    );
+  }
+}
 ```
 
 ## 插件使用注意问题：
