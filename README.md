@@ -148,7 +148,7 @@ class _BodyState extends State<_Body> {
 ```
 
 ## 插件使用注意问题：
- * 我实用插件时添加了点聚合功能，使用注意问题：
+ ### 我使用插件时添加了点聚合功能，使用注意问题：
  - Cluster数据格式没做限制，解析的时候解析的是json，所以传值data必须是json字符串，否则运行崩溃
  ```
 var data = {"shopid": item.shopid, "warning_num": item.warning_num};
@@ -157,7 +157,8 @@ var data = {"shopid": item.shopid, "warning_num": item.warning_num};
 _initClusterMap[cluster.id] = cluster;
 
  ```
- * Android配置时尤其要注意，参考demo进行配置，否则会运行不起来，几个注意的地方：
+
+ ### Android配置时尤其要注意，参考demo进行配置，否则会运行不起来，几个注意的地方：
  - 引入demo中高德sdk到flutter项目Android目录中：把example/android/app/libs 文件夹的都复制到 ##/android/app/libs 中
  - build.gradle配置：
  ```
