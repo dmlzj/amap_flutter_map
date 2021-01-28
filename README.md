@@ -98,6 +98,43 @@ class _ShowMapPageState extends State<_ShowMapPageBody> {
 
 ```
 
+## 插件使用注意问题：
+ * 我实用插件时添加了点聚合功能，使用注意问题：
+ - Cluster数据格式没做限制，解析的时候解析的是json，所以传值data必须是json字符串，否则运行崩溃
+ ```
+var data = {"shopid": item.shopid, "warning_num": item.warning_num};
+        Cluster cluster = Cluster(
+            position: LatLng(item.lat, item.lng), data: jsonEncode(data));
+_initClusterMap[cluster.id] = cluster;
+
+ ```
+ * Android配置时尤其要注意，参考demo进行配置，否则会运行不起来，几个注意的地方：
+ - 引入demo中高德sdk到flutter项目Android目录中：把example/android/app/libs 文件夹的都复制到 ##/android/app/libs 中
+ - build.gradle配置：
+ ```
+ android {
+  ........
+
+  buildTypes {
+        release {
+            ....
+            //关闭混淆, 否则在运行release包后可能出现运行崩溃， TODO后续进行混淆配置
+            minifyEnabled false //删除无用代码
+            shrinkResources false //删除无用资源
+        }
+  }
+  sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+  }
+ }
+ dependencies {
+    //demo中引入高德地图SDK
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+}
+
+ ```
 ## 已知问题：
 1. Flutter插件在iOS端，MapView销毁时，一定概率触发Main Thread Checker的报警，
 经过对比测试确认是Flutter的bug所致；https://github.com/flutter/flutter/issues/68490 

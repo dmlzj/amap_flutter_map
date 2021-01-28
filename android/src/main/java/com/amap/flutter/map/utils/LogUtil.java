@@ -10,7 +10,7 @@ import android.util.Log;
  * @since
  */
 public class LogUtil {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final String TAG = "AMapFlutter_";
     public static void i(String className, String message) {
         if(DEBUG) {

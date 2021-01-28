@@ -5,9 +5,10 @@
  * @Email: 284832506@qq.com
  * @Date: 2020-12-18 21:36:13
  * @LastEditors: dmlzj
- * @LastEditTime: 2021-01-22 09:58:48
+ * @LastEditTime: 2021-01-28 13:58:56
  * @如果有bug，那肯定不是我的锅，嘤嘤嘤
  */
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:amap_flutter_base/amap_flutter_base.dart';
@@ -41,7 +42,7 @@ class _BodyState extends State<_Body> {
       Marker marker = Marker(position: position);
       _initMarkerMap[marker.id] = marker;
       Map data = {"test": "test"};
-      Cluster cluster = Cluster(position: position, data: data.toString());
+      Cluster cluster = Cluster(position: position, data: jsonEncode(data));
       _initClusterMap[cluster.id] = cluster;
     }
 
