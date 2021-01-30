@@ -5,7 +5,7 @@
 //  Created by lly on 2020/10/30.
 //
 
-#import <MAMapKit/MAMapKit.h>
+#import <AMapNaviKit/MAMapKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

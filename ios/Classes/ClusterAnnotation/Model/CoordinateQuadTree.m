@@ -6,7 +6,7 @@
 //  Copyright (c) 2014年 AutoNavi. All rights reserved.
 //
 
-#import <MAMapKit/MAMapKit.h>
+#import <AMapNaviKit/MAMapKit.h>
 #import <AMapSearchKit/AMapCommonObj.h>
 #import "CoordinateQuadTree.h"
 #import "ClusterAnnotation.h"

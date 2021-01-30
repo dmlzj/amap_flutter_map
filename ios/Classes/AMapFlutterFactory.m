@@ -6,7 +6,7 @@
 //
 
 #import "AMapFlutterFactory.h"
-#import <MAMapKit/MAMapKit.h>
+#import <AMapNaviKit/MAMapKit.h>
 #import "AMapViewController.h"
 
 @implementation AMapFlutterFactory {

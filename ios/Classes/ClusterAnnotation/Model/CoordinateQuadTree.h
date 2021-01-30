@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <MAMapKit/MAMapKit.h>
+#import <AMapNaviKit/MAMapKit.h>
 #import "QuadTree.h"
 
 @interface CoordinateQuadTree : NSObject
