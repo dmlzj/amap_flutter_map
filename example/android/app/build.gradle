@@ -65,12 +65,14 @@ android {
     }
     sourceSets {
         main {
+            // 插件单独运行时必须使用下面的类库，和导航插件同时使用时要注释掉
             jniLibs.srcDirs = ['libs']
         }
     }
 }
 dependencies {
     //demo中引入高德地图SDK
+    // 插件单独运行时必须使用下面的类库，和导航插件同时使用时要注释掉
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 }
 

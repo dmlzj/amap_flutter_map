@@ -181,12 +181,14 @@ _initClusterMap[cluster.id] = cluster;
   }
   sourceSets {
         main {
+            // 单独运行本插件必须使用，和导航插件共同使用时要注释掉
             jniLibs.srcDirs = ['libs']
         }
   }
  }
  dependencies {
     //demo中引入高德地图SDK
+    // 单独运行本插件必须使用，和导航插件共同使用时要注释掉
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 }
 
