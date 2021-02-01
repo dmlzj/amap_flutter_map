@@ -1,6 +1,6 @@
 # amap_flutter_map
 
-基于[高德开放平台地图SDK](https://lbs.amap.com/api/)的flutter插件 QQ交流群：731946579
+基于[高德开放平台地图SDK](https://lbs.amap.com/api/)的flutter插件，获取Flutter高德导航插件请入QQ群获取：731946579
 
 ## Usage
 * 使用Flutter插件，请参考[在Flutter里使用Packages](https://flutter.cn/docs/development/packages-and-plugins/using-packages), 添加amap_flutter_map的引用
@@ -105,7 +105,7 @@ class _ShowMapPageState extends State<_ShowMapPageBody> {
 ```
 
 ## 点聚合使用示例：参考demo中的marker_add_with_map.dart文件即可
-* 效果图如下：
+* 聚合效果图如下：
 ![image](https://github.com/dmlzj/amap_flutter_map/blob/master/test/Screenshot.jpg)
 ```Dart
 class MarkerAddWithMapPage extends BasePage {
@@ -153,6 +153,10 @@ class _BodyState extends State<_Body> {
 }
 ```
 
+## 导航插件效果图
+
+![image](https://github.com/dmlzj/amap_flutter_map/blob/master/test/flutter_navi.png)
+
 ## 插件使用注意问题：
  ### 我使用插件时添加了点聚合功能，使用注意问题：
  - Cluster数据格式没做限制，解析的时候解析的是json，所以传值data必须是json字符串，否则运行崩溃
@@ -198,6 +202,13 @@ _initClusterMap[cluster.id] = cluster;
 经过对比测试确认是Flutter的bug所致；https://github.com/flutter/flutter/issues/68490 
 （对比1.25.0-8.1.pre版本已修复，从github的issues中得知，有其它开发着反馈1.24.0-6.0.pre已修复；该问题依赖Flutter升级修复） 
 
+## 关于捐赠
+
+如果您觉得有用，可以请我喝杯水！
+
+| 微信                                                       | 支付宝                                               |
+| ---------------------------------------------------------- | ---------------------------------------------------- |
+| ![image](https://github.com/dmlzj/amap_flutter_map/blob/master/test/wxpay.png) | ![image](https://github.com/dmlzj/amap_flutter_map/blob/master/test/alipay.png) |
 
 
 
