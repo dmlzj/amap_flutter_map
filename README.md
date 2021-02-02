@@ -155,7 +155,9 @@ class _BodyState extends State<_Body> {
 
 ## 导航插件效果图
 
-![image](https://github.com/dmlzj/amap_flutter_map/blob/master/test/flutter_navi.png)
+|     |   |    |    |
+|  ----  | ----  | ---- | ---- |
+| ![image](test/1.jpg)  | ![image](test/2.jpg) | ![image](test/3.jpg)  | ![image](test/4.jpg) |
 
 ## 插件使用注意问题：
  ### 我使用插件时添加了点聚合功能，使用注意问题：
