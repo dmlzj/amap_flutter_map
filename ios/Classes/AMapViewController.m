@@ -324,6 +324,10 @@
         /* 设置annotationView的属性. */
         annotationView.annotation = annotation;
         annotationView.count = [(ClusterAnnotation *)annotation count];
+        if (mapView.zoomLevel==mapView.maxZoomLevel) {
+            annotationView.count = 1;
+        }
+        
         /* 不弹出原生annotation */
         annotationView.canShowCallout = NO;
         
@@ -524,6 +528,7 @@
  * @param animated 是否动画
  */
 - (void)mapView:(MAMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
+    
     AMapCameraPosition *cameraPos = [mapView getCurrentCameraPosition];
     NSDictionary *dict = [cameraPos toDictionary];
     if (dict) {
@@ -531,6 +536,7 @@
     }
     if(_arr.count!=0){
         [_clusterController addClusters:_arr];
+        
     }
 
 }
