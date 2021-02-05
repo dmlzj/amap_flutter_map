@@ -117,7 +117,8 @@ CGFloat ScaledValueForValue(CGFloat value)
     CGRect newLabelBounds = CGRectMake(0, 0, 40, 40);
     self.countLabel.frame = CenterRect(newLabelBounds, RectCenter(newBounds));
     self.countLabel.text = [@(_count) stringValue];
-    self.countImage.frame = CenterRect(newLabelBounds, RectCenter(newBounds));
+    self.countImage.frame =CGRectMake(0, 0, 30, 30);
+    //CenterRect(newLabelBounds, RectCenter(newBounds));
     
     if (_count==1) {
         self.countLabel.hidden = YES;

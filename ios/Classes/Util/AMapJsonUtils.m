@@ -189,7 +189,7 @@
                 [ret setValue:value forKey:propertyName];
 #ifdef DEBUG
                 Class valueClaz = [value class];
-//                NSLog(@"\U0001F913\U0001F913 Warning1: property '%@' of %@ is %@, %@ is received", propertyName, modelClass, propertyClass, valueClaz);
+               // NSLog(@"\U0001F913\U0001F913 Warning1: property '%@' of %@ is %@, %@ is received", propertyName, modelClass, propertyClass, valueClaz);
 #endif
             }
         } else { //end of if(propertyClaz) 如@"Ti" @"Tf"
@@ -198,7 +198,7 @@
             } else {
 #ifdef DEBUG
                 Class valueClaz = [value class];
-//                NSLog(@"\U0001F913\U0001F913 Warning1: property '%@' of %@ is %@, %@ is received", propertyName, modelClass, propertyClass, valueClaz);
+               // NSLog(@"\U0001F913\U0001F913 Warning1: property '%@' of %@ is %@, %@ is received", propertyName, modelClass, propertyClass, valueClaz);
 #endif
             }
         }
@@ -206,7 +206,7 @@
     
 #ifdef DEBUG
     if([missedProperties count] > 0) {
-        //NSLog(@"\U0001F913\U0001F913 Warning2: %@ value missed: %@", modelClass, missedProperties);
+        // NSLog(@"\U0001F913\U0001F913 Warning2: %@ value missed: %@", modelClass, missedProperties);
     }
 #endif
     
