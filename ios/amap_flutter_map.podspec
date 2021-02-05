@@ -20,7 +20,7 @@ A new Flutter plugin.
   s.dependency 'AMapSearch'
   s.static_framework = true
   s.platform = :ios, '8.0'
-
+  s.resources = ['Assets/*.png'];
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
 end

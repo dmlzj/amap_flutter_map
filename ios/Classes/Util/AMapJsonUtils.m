@@ -272,7 +272,7 @@
     return location;
 }
 
-+ (NSString *)toJSONData:(id)theData{
++ (NSString *)jsonToString:(id)theData{
     NSString * jsonString = @"";
     if (theData != nil) {
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:theData
@@ -285,4 +285,22 @@
     }
     return jsonString;
 }
++ (id)stringToJson:(NSString *)string
+{
+    if (string == nil) {
+        return nil;
+    }
+    
+    NSData *jsonData = [string dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *err;
+    id dic = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                        options:NSJSONReadingMutableContainers
+                                                          error:&err];
+    if(err)
+    {
+        return nil;
+    }
+    return dic;
+}
+
 @end

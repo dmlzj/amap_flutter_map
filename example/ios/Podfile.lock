@@ -37,7 +37,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler/ios"
 
 SPEC CHECKSUMS:
-  amap_flutter_map: c45a76c5914cec3dc8b3e0e1ecbbb0de51457ae7
+  amap_flutter_map: 6bf0f494c06bc9f99f2c3dd580870e9d2762f7e2
   AMapFoundation: b67560a6f21aab81c8c12f84616b55a3833b6253
   AMapNavi: ce659052825437090becd14c3bbd5a71b88fcafe
   AMapSearch: a62d0b2508270dff5a9b05ba3af9fc8843b48c8a
@@ -47,4 +47,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: f32fb4e7c14f8b3ca19a369d7be425dd9241af27
 
-COCOAPODS: 1.8.0
+COCOAPODS: 1.9.3

@@ -33,6 +33,7 @@ class _BodyState extends State<_Body> {
   static final LatLng mapCenter = const LatLng(39.909187, 116.397451);
   final Map<String, Marker> _initMarkerMap = <String, Marker>{};
   final Map<String, Cluster> _initClusterMap = <String, Cluster>{};
+  final List<int> numList = [0, 1, 5, 0, 2, 0, 1, 3, 2, 0];
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class _BodyState extends State<_Body> {
           mapCenter.longitude + cos(i * pi / 12.0) / 20.0);
       Marker marker = Marker(position: position);
       _initMarkerMap[marker.id] = marker;
-      Map data = {"test": "test"};
+      Map data = {"shopid": "1222", "warning_num": numList[i]};
       Cluster cluster = Cluster(position: position, data: jsonEncode(data));
       _initClusterMap[cluster.id] = cluster;
     }

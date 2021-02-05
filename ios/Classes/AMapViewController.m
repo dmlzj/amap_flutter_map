@@ -122,6 +122,7 @@
         id clustersToAdd = args[@"clustersToAdd"];
         if ([clustersToAdd isKindOfClass:[NSArray class]]) {
             _arr = clustersToAdd;
+            NSLog(@"%@",clustersToAdd);
         }
         
         [self setMethodCallHandler];
@@ -323,10 +324,20 @@
         /* 设置annotationView的属性. */
         annotationView.annotation = annotation;
         annotationView.count = [(ClusterAnnotation *)annotation count];
-        
         /* 不弹出原生annotation */
         annotationView.canShowCallout = NO;
         
+        ClusterAnnotation *an = (ClusterAnnotation *)annotation;
+        BOOL haveWarning = false;
+        //判断是否存在告警
+        for ( AMapPOI *poi in an.pois) {
+            NSDictionary * dic =(NSDictionary *)[AMapJsonUtils stringToJson:poi.address];
+            if ([dic.allKeys containsObject:@"warning_num"] && [dic[@"warning_num"] intValue]>0) {
+                haveWarning = true;
+            }
+            
+        }
+        annotationView.hasWarning = haveWarning;
         return annotationView;
     }
     if ([annotation isKindOfClass:[MAPointAnnotation class]] == NO) {
@@ -393,7 +404,7 @@
             NSMutableDictionary * dic = [[NSMutableDictionary alloc]init];
             [dic setObject:poi.address forKey:@"data"];
             [dic setObject:@{@"latitude":@(poi.location.latitude),@"longitude":@(poi.location.longitude)} forKey:@"position"];
-            [self.channel invokeMethod:@"cluster#onTap" arguments:@{@"items" :[AMapJsonUtils toJSONData:dic]}];
+            [self.channel invokeMethod:@"cluster#onTap" arguments:@{@"items" :[AMapJsonUtils jsonToString:dic]}];
         }
     }else{
         MAPointAnnotation *fAnno = view.annotation;

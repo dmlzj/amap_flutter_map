@@ -13,5 +13,5 @@
 @interface ClusterAnnotationView : MAAnnotationView
 
 @property (nonatomic, assign) NSUInteger count;
-
+@property (nonatomic, assign) BOOL hasWarning;
 @end
