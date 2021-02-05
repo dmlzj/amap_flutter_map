@@ -401,11 +401,11 @@
         ClusterAnnotation *annotation = (ClusterAnnotation *)view.annotation;
         if (annotation.pois.count!=0) {
             AMapPOI *poi = annotation.pois[0];
-            BOOL isSame = NO;
+            BOOL isSame = YES;
             if (annotation.pois.count>1) {
                 for (AMapPOI* p in annotation.pois) {
-                    if ([poi.address isEqualToString:p.address]) {
-                        isSame = YES;
+                    if (![poi.address isEqualToString:p.address]) {
+                        isSame = NO;
                     }
                 }
             }
