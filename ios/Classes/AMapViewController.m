@@ -324,10 +324,6 @@
         /* 设置annotationView的属性. */
         annotationView.annotation = annotation;
         annotationView.count = [(ClusterAnnotation *)annotation count];
-        if (mapView.zoomLevel==mapView.maxZoomLevel) {
-            annotationView.count = 1;
-        }
-        
         /* 不弹出原生annotation */
         annotationView.canShowCallout = NO;
         
@@ -403,13 +399,26 @@
 - (void)mapView:(MAMapView *)mapView didAnnotationViewTapped:(MAAnnotationView *)view {
     if ([view isKindOfClass:[ClusterAnnotationView class]]) {
         ClusterAnnotation *annotation = (ClusterAnnotation *)view.annotation;
-        if(annotation.pois.count==1){
+        if (annotation.pois.count!=0) {
             AMapPOI *poi = annotation.pois[0];
-            NSMutableDictionary * dic = [[NSMutableDictionary alloc]init];
-            [dic setObject:poi.address forKey:@"data"];
-            [dic setObject:@{@"latitude":@(poi.location.latitude),@"longitude":@(poi.location.longitude)} forKey:@"position"];
-            [self.channel invokeMethod:@"cluster#onTap" arguments:@{@"items" :[AMapJsonUtils jsonToString:dic]}];
+            BOOL isSame = NO;
+            if (annotation.pois.count>1) {
+                for (AMapPOI* p in annotation.pois) {
+                    if ([poi.address isEqualToString:p.address]) {
+                        isSame = YES;
+                    }
+                }
+            }
+            //点击聚合点 回传数据
+            if(annotation.pois.count==1|| isSame){
+              
+                NSMutableDictionary * dic = [[NSMutableDictionary alloc]init];
+                [dic setObject:poi.address forKey:@"data"];
+                [dic setObject:@{@"latitude":@(poi.location.latitude),@"longitude":@(poi.location.longitude)} forKey:@"position"];
+                [self.channel invokeMethod:@"cluster#onTap" arguments:@{@"items" :[AMapJsonUtils jsonToString:dic]}];
+            }
         }
+
     }else{
         MAPointAnnotation *fAnno = view.annotation;
         if (fAnno.markerId == nil) {
