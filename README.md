@@ -160,6 +160,7 @@ class _BodyState extends State<_Body> {
 | ![image](test/1.jpg)  | ![image](test/2.jpg) | ![image](test/3.jpg)  | ![image](test/4.jpg) |
 
 ## 插件使用注意问题：
+ ### 插件依赖官方库：amap_flutter_base，记得引入
  ### 我使用插件时添加了点聚合功能，使用注意问题：
  - Cluster数据格式没做限制，解析的时候解析的是json，所以传值data必须是json字符串，否则运行崩溃
  ```
